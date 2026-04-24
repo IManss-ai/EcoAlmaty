@@ -28,6 +28,12 @@ body {
 @keyframes badge-pop { 0%{transform:scale(0);opacity:0;}65%{transform:scale(1.15);opacity:1;}100%{transform:scale(1);opacity:1;} }
 @keyframes slide-in-right { from{opacity:0;transform:translateX(26px);}to{opacity:1;transform:translateX(0);} }
 @keyframes slide-in-left  { from{opacity:0;transform:translateX(-26px);}to{opacity:1;transform:translateX(0);} }
+@keyframes logo-pulse { 0%{transform:scale(0.7);opacity:0;}50%{transform:scale(1.08);opacity:1;}100%{transform:scale(1);opacity:1;} }
+@keyframes logo-text-in { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);} }
+@keyframes loader-fade-out { from{opacity:1;}to{opacity:0;pointer-events:none;} }
+@keyframes typing-cursor { 0%,100%{opacity:1;}50%{opacity:0;} }
+@keyframes tab-fade-in { from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);} }
+@keyframes share-pop { 0%{transform:scale(0.8);opacity:0;}100%{transform:scale(1);opacity:1;} }
 </style>
 </head>
 <body>
@@ -397,14 +403,179 @@ const DARK = {
   rule:'rgba(255,255,255,0.07)', nav:'rgba(10,26,14,0.94)',
 };
 
+// ── Language system ───────────────────────────────────────────
+const LangCtx = createContext('en');
+const useLang = () => useContext(LangCtx);
+
+const T = {
+  en: {
+    appName: 'EcoAlmaty',
+    aqLive: 'Air Quality · Live',
+    aqiIndex: 'AQI index',
+    good: 'Good', hazardous: 'Hazardous',
+    todayLesson: "Today\u2019s lesson",
+    markDone: 'Mark as done',
+    doneMsg: 'Done!',
+    swipe: 'Swipe to read \u2192',
+    tipsTitle: 'What to do today',
+    ecoScore: 'Eco Score',
+    badges: 'Badges',
+    seeAll: 'See all',
+    aqiMap: 'Air Quality Map',
+    districts: 'Almaty districts \u00b7 Live data',
+    aqiScale: 'AQI scale',
+    dailyChallenge: 'Daily Challenge',
+    question: 'Question',
+    qDesc: '3 quick questions about today\u2019s air',
+    correct: 'correct!',
+    tryAgain: 'Try again',
+    ptsEarned: 'Points earned',
+    leaderboard: 'Leaderboard',
+    yourClass: 'Your class this week',
+    profile: 'Profile',
+    scoreBreak: 'Score breakdown',
+    thisWeek: 'This week',
+    notifs: 'Notifications',
+    share: 'Share',
+    shareTitle: 'Share AQI Card',
+    aqi: {
+      good: 'Good', moderate: 'Moderate', sensitive: 'Unhealthy for sensitive',
+      unhealthy: 'Unhealthy', veryUnhealthy: 'Very Unhealthy', hazardous: 'Hazardous',
+    },
+    aqiMsg: {
+      good: 'Air is clean \u2014 great time to go outside!',
+      moderate: 'Air is okay, but sensitive folks might feel it.',
+      sensitive: 'Wear a mask if you\u2019re going out for long.',
+      unhealthy: 'Pretty bad \u2014 try to stay indoors today.',
+      veryUnhealthy: 'Very unhealthy \u2014 stay inside and close windows.',
+      hazardous: 'Hazardous! Do not go outside today.',
+    },
+    aiGen: 'AI-generated lesson',
+    generating: 'Generating with AI...',
+    liveData: 'Live data from Almaty station',
+  },
+  kz: {
+    appName: 'ЭкоАлматы',
+    aqLive: 'Ауа сапасы · Тікелей',
+    aqiIndex: 'AQI индексі',
+    good: 'Жақсы', hazardous: 'Қауіпті',
+    todayLesson: 'Бүгінгі сабақ',
+    markDone: 'Оқылды деп белгілеу',
+    doneMsg: 'Дайын!',
+    swipe: 'Оқу үшін сырғытыңыз \u2192',
+    tipsTitle: 'Бүгін не істеу керек',
+    ecoScore: 'Эко ұпай',
+    badges: 'Жетістіктер',
+    seeAll: 'Барлығын көру',
+    aqiMap: 'Ауа сапасы картасы',
+    districts: 'Алматы аудандары \u00b7 Тікелей',
+    aqiScale: 'AQI шкаласы',
+    dailyChallenge: 'Күнделікті сынақ',
+    question: 'Сұрақ',
+    qDesc: 'Бүгінгі ауа туралы 3 сұрақ',
+    correct: 'дұрыс!',
+    tryAgain: 'Қайтадан',
+    ptsEarned: 'Жиналған ұпай',
+    leaderboard: 'Көшбасшылар',
+    yourClass: 'Сіздің класс осы аптада',
+    profile: 'Профиль',
+    scoreBreak: 'Ұпай бөлінуі',
+    thisWeek: 'Осы апта',
+    notifs: 'Хабарламалар',
+    share: 'Бөлісу',
+    shareTitle: 'AQI картасын бөлісу',
+    aqi: {
+      good: 'Жақсы', moderate: 'Орташа', sensitive: 'Сезімтал адамдарға зиянды',
+      unhealthy: 'Зиянды', veryUnhealthy: 'Өте зиянды', hazardous: 'Қауіпті',
+    },
+    aqiMsg: {
+      good: 'Ауа таза — серуендеуге тамаша уақыт!',
+      moderate: 'Ауа қалыпты, бірақ сезімтал адамдар сезінуі мүмкін.',
+      sensitive: 'Ұзақ серуендесеңіз маска тағыңыз.',
+      unhealthy: 'Нашар — бүгін үйде болғаныңыз жөн.',
+      veryUnhealthy: 'Өте зиянды — үйде болып, терезелерді жабыңыз.',
+      hazardous: 'Қауіпті! Бүгін сыртқа шықпаңыз.',
+    },
+    aiGen: 'AI жасаған сабақ',
+    generating: 'AI генерациялауда...',
+    liveData: 'Алматы станциясынан тікелей деректер',
+  },
+  ru: {
+    appName: 'ЭкоАлматы',
+    aqLive: 'Качество воздуха · Онлайн',
+    aqiIndex: 'Индекс AQI',
+    good: 'Хорошо', hazardous: 'Опасно',
+    todayLesson: 'Урок дня',
+    markDone: 'Отметить прочитанным',
+    doneMsg: 'Готово!',
+    swipe: 'Листайте, чтобы читать \u2192',
+    tipsTitle: 'Что делать сегодня',
+    ecoScore: 'Эко-балл',
+    badges: 'Достижения',
+    seeAll: 'Все',
+    aqiMap: 'Карта качества воздуха',
+    districts: 'Районы Алматы \u00b7 Онлайн',
+    aqiScale: 'Шкала AQI',
+    dailyChallenge: 'Ежедневный вызов',
+    question: 'Вопрос',
+    qDesc: '3 вопроса о воздухе сегодня',
+    correct: 'правильно!',
+    tryAgain: 'Ещё раз',
+    ptsEarned: 'Набрано баллов',
+    leaderboard: 'Рейтинг',
+    yourClass: 'Ваш класс на этой неделе',
+    profile: 'Профиль',
+    scoreBreak: 'Разбивка баллов',
+    thisWeek: 'Эта неделя',
+    notifs: 'Уведомления',
+    share: 'Поделиться',
+    shareTitle: 'Поделиться AQI',
+    aqi: {
+      good: 'Хорошо', moderate: 'Умеренно', sensitive: 'Вредно для чувствительных',
+      unhealthy: 'Вредно', veryUnhealthy: 'Очень вредно', hazardous: 'Опасно',
+    },
+    aqiMsg: {
+      good: 'Воздух чистый — отличное время для прогулки!',
+      moderate: 'Воздух нормальный, но чувствительные могут ощутить.',
+      sensitive: 'Наденьте маску, если выходите надолго.',
+      unhealthy: 'Плохо — лучше остаться дома сегодня.',
+      veryUnhealthy: 'Очень вредно — оставайтесь дома, закройте окна.',
+      hazardous: 'Опасно! Не выходите на улицу сегодня.',
+    },
+    aiGen: 'Урок от AI',
+    generating: 'AI генерирует...',
+    liveData: 'Данные со станции в Алматы',
+  },
+};
+
+function t(key, lang) {
+  const dict = T[lang] || T.en;
+  return key.split('.').reduce((o,k) => o?.[k], dict) ?? key.split('.').reduce((o,k) => o?.[k], T.en) ?? key;
+}
+
+// ── Click sound utility ──────────────────────────────────────
+const audioCtx = typeof AudioContext !== 'undefined' ? new AudioContext() : null;
+function playClick() {
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.frequency.value = 1200; osc.type = 'sine';
+  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.06);
+}
+
 // ── AQI meta ──────────────────────────────────────────────────
-function aqiMeta(v) {
-  if (v <= 50)  return { label:'Good',                    color:'#3a9e50', emoji:'😊', msg:'Air is clean \u2014 great time to go outside!' };
-  if (v <= 100) return { label:'Moderate',                color:'#c99010', emoji:'😐', msg:'Air is okay, but sensitive folks might feel it.' };
-  if (v <= 150) return { label:'Unhealthy for sensitive', color:'#c96418', emoji:'😷', msg:'Wear a mask if you\u2019re going out for long.' };
-  if (v <= 200) return { label:'Unhealthy',               color:'#b83030', emoji:'🤢', msg:'Pretty bad \u2014 try to stay indoors today.' };
-  if (v <= 300) return { label:'Very Unhealthy',          color:'#7c5cbf', emoji:'☠️', msg:'Very unhealthy \u2014 stay inside and close windows.' };
-  return               { label:'Hazardous',               color:'#b04060', emoji:'🚨', msg:'Hazardous! Do not go outside today.' };
+function aqiMeta(v, lang) {
+  const l = lang || 'en';
+  if (v <= 50)  return { label:t('aqi.good',l),           color:'#3a9e50', emoji:'😊', msg:t('aqiMsg.good',l),           key:'good' };
+  if (v <= 100) return { label:t('aqi.moderate',l),       color:'#c99010', emoji:'😐', msg:t('aqiMsg.moderate',l),       key:'moderate' };
+  if (v <= 150) return { label:t('aqi.sensitive',l),      color:'#c96418', emoji:'😷', msg:t('aqiMsg.sensitive',l),      key:'sensitive' };
+  if (v <= 200) return { label:t('aqi.unhealthy',l),      color:'#b83030', emoji:'🤢', msg:t('aqiMsg.unhealthy',l),      key:'unhealthy' };
+  if (v <= 300) return { label:t('aqi.veryUnhealthy',l),  color:'#7c5cbf', emoji:'☠️', msg:t('aqiMsg.veryUnhealthy',l),  key:'veryUnhealthy' };
+  return               { label:t('aqi.hazardous',l),      color:'#b04060', emoji:'🚨', msg:t('aqiMsg.hazardous',l),      key:'hazardous' };
 }
 
 // ── Hooks ─────────────────────────────────────────────────────
@@ -483,20 +654,27 @@ function Confetti({ active, onDone }) {
 }
 
 // ── AQI Panel ─────────────────────────────────────────────────
-function AQIPanel({ aqi }) {
+function AQIPanel({ aqi, liveSource, onShare }) {
   const dark = useTheme();
+  const lang = useLang();
   const P = dark ? DARK : LIGHT;
-  const meta = aqiMeta(aqi);
+  const meta = aqiMeta(aqi, lang);
   const displayed = useCountUp(aqi);
   const pct = Math.min(aqi/300, 1);
   return (
     <div style={{background:`linear-gradient(160deg,${meta.color}18 0%,${meta.color}06 100%)`, padding:'20px 20px 18px', transition:'background 0.5s ease'}}>
-      <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:14}}>Air Quality · Live</div>
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14}}>
+        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase'}}>{t('aqLive',lang)}</div>
+        <div style={{display:'flex', gap:6, alignItems:'center'}}>
+          {liveSource && <div style={{fontSize:8.5, color:P.lime, fontWeight:600, background:P.limeDim, borderRadius:99, padding:'2px 8px', animation:'fade-in-quick 0.4s ease both'}}>LIVE</div>}
+          <button onClick={()=>{playClick(); onShare&&onShare();}} style={{background:P.limeDim, border:`1px solid ${P.lime}44`, borderRadius:8, padding:'4px 10px', fontSize:10, fontWeight:700, color:P.lime, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>{t('share',lang)}</button>
+        </div>
+      </div>
       <div style={{display:'flex', alignItems:'center', gap:14, marginBottom:12}}>
         <div style={{fontSize:52, animation:'breathe 3s ease-in-out infinite', flexShrink:0}}>{meta.emoji}</div>
         <div>
           <div style={{fontFamily:'DM Serif Display,serif', fontSize:76, lineHeight:0.9, letterSpacing:-2, color:meta.color, transition:'color 0.4s ease'}}>{displayed}</div>
-          <div style={{fontSize:9, letterSpacing:2.5, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginTop:3}}>AQI index</div>
+          <div style={{fontSize:9, letterSpacing:2.5, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginTop:3}}>{t('aqiIndex',lang)}</div>
         </div>
       </div>
       <div style={{display:'inline-flex', alignItems:'center', gap:6, background:`${meta.color}18`, border:`1.5px solid ${meta.color}44`, borderRadius:99, padding:'5px 14px', marginBottom:10}}>
@@ -504,13 +682,14 @@ function AQIPanel({ aqi }) {
         <span style={{fontSize:12, fontWeight:700, color:meta.color}}>{meta.label}</span>
       </div>
       <div style={{fontSize:13.5, color:P.text, lineHeight:1.55, fontWeight:500, marginBottom:14}}>{meta.msg}</div>
+      {liveSource && <div style={{fontSize:10, color:P.textDim, marginBottom:8, fontStyle:'italic'}}>📡 {t('liveData',lang)}</div>}
       <div style={{position:'relative', height:5, borderRadius:3}}>
         <div style={{position:'absolute', inset:0, borderRadius:3, background:'linear-gradient(to right,#3a8c50,#d4860e,#c94a18,#7c5cbf)', opacity:0.25}}/>
         <div style={{position:'absolute', inset:0, borderRadius:3, background:meta.color, width:`${pct*100}%`, transition:'width 0.7s cubic-bezier(0.34,1.2,0.64,1)', opacity:0.85}}/>
       </div>
       <div style={{display:'flex', justifyContent:'space-between', marginTop:4}}>
-        <span style={{fontSize:9.5, color:P.textDim}}>Good</span>
-        <span style={{fontSize:9.5, color:P.textDim}}>Hazardous</span>
+        <span style={{fontSize:9.5, color:P.textDim}}>{t('good',lang)}</span>
+        <span style={{fontSize:9.5, color:P.textDim}}>{t('hazardous',lang)}</span>
       </div>
     </div>
   );
@@ -525,14 +704,30 @@ const LESSONS = [
 
 function LessonCards({ done, onDone }) {
   const dark = useTheme();
+  const lang = useLang();
   const P = dark ? DARK : LIGHT;
   const [idx, setIdx] = useState(0);
   const [checkDrawn, setCheckDrawn] = useState(false);
   const [confetti, setConfetti] = useState(false);
+  const [typing, setTyping] = useState(true);
+  const [typedChars, setTypedChars] = useState(0);
   const lesson = LESSONS[idx];
   const isDone = done && idx === 0;
 
+  // AI typing effect on first load
+  useEffect(() => {
+    if (!typing) return;
+    const fullLen = lesson.body.length;
+    if (typedChars >= fullLen) { setTyping(false); return; }
+    const speed = typedChars < 3 ? 80 : 12 + Math.random() * 18;
+    const timer = setTimeout(() => setTypedChars(c => c + 1), speed);
+    return () => clearTimeout(timer);
+  }, [typing, typedChars, idx]);
+
+  useEffect(() => { setTyping(true); setTypedChars(0); }, [idx]);
+
   function handleDone() {
+    playClick();
     onDone(); setConfetti(true);
     setTimeout(() => setCheckDrawn(true), 100);
   }
@@ -540,7 +735,10 @@ function LessonCards({ done, onDone }) {
   return (
     <div>
       <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0 20px', marginBottom:10}}>
-        <span style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase'}}>Today\u2019s lesson</span>
+        <div style={{display:'flex', alignItems:'center', gap:6}}>
+          <span style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase'}}>{t('todayLesson',lang)}</span>
+          <span style={{fontSize:8, color:P.lime, fontWeight:600, background:P.limeDim, borderRadius:99, padding:'1px 6px'}}>✨ {t('aiGen',lang)}</span>
+        </div>
         <div style={{display:'flex', gap:5}}>
           {LESSONS.map((_,i) => (
             <div key={i} onClick={() => setIdx(i)} style={{width:i===idx?18:6, height:6, borderRadius:3, background:i===idx?P.lime:P.limeMid, transition:'all 0.3s ease', cursor:'pointer'}}/>
@@ -556,7 +754,10 @@ function LessonCards({ done, onDone }) {
           animation:'slide-up-in 0.4s ease both',
         }}>
           <h3 style={{fontFamily:'DM Serif Display,serif', fontSize:17, fontWeight:400, color:isDone?P.textMid:P.text, lineHeight:1.35, marginBottom:10, textDecoration:isDone?'line-through':'none', transition:'all 0.4s ease'}}>{lesson.title}</h3>
-          <p style={{fontSize:13, color:P.textMid, lineHeight:1.7, marginBottom:14}}>{lesson.body}</p>
+          <p style={{fontSize:13, color:P.textMid, lineHeight:1.7, marginBottom:14}}>
+            {typing ? lesson.body.slice(0, typedChars) : lesson.body}
+            {typing && <span style={{display:'inline-block', width:2, height:14, background:P.lime, marginLeft:1, verticalAlign:'middle', animation:'typing-cursor 0.6s ease infinite'}}/>}
+          </p>
           {idx===0 ? (
             isDone ? (
               <div style={{display:'flex', alignItems:'center', gap:8, borderTop:`1px solid ${P.rule}`, paddingTop:12}}>
@@ -565,7 +766,7 @@ function LessonCards({ done, onDone }) {
                   <path d="M5 9.5l3 3 5-6" stroke={P.lime} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                     strokeDasharray="14" strokeDashoffset={checkDrawn?0:14} style={{transition:'stroke-dashoffset 0.4s ease 0.1s'}}/>
                 </svg>
-                <span style={{fontSize:13, fontWeight:600, color:P.lime}}>Done! +{lesson.pts} eco points</span>
+                <span style={{fontSize:13, fontWeight:600, color:P.lime}}>{t('doneMsg',lang)} +{lesson.pts} eco points</span>
               </div>
             ) : (
               <button onClick={handleDone} style={{
@@ -576,10 +777,10 @@ function LessonCards({ done, onDone }) {
               }}
                 onMouseOver={e=>e.currentTarget.style.transform='scale(1.04)'}
                 onMouseOut={e=>e.currentTarget.style.transform='scale(1)'}
-              >Mark as done</button>
+              >{t('markDone',lang)}</button>
             )
           ) : (
-            <div style={{fontSize:11, color:P.lime, fontWeight:600}}>Swipe to read \u2192</div>
+            <div style={{fontSize:11, color:P.lime, fontWeight:600}}>{t('swipe',lang)}</div>
           )}
         </div>
       </div>
@@ -598,7 +799,7 @@ function TipCard({ tip, idx }) {
   const P = dark ? DARK : LIGHT;
   const [noted, setNoted] = useState(false);
   return (
-    <div onClick={()=>setNoted(n=>!n)} style={{
+    <div onClick={()=>{playClick();setNoted(n=>!n);}} style={{
       background:noted?`${tip.color}14`:P.card,
       border:`1.5px solid ${noted?tip.color:P.border}`,
       borderRadius:18, padding:'14px', cursor:'pointer', flexShrink:0, width:162,
@@ -625,18 +826,19 @@ const BADGES = [
 ];
 
 // ── Dashboard ─────────────────────────────────────────────────
-function Dashboard({ aqi, score, streak, lessonDone, onLessonDone, onBadges }) {
+function Dashboard({ aqi, score, streak, lessonDone, onLessonDone, onBadges, liveSource, onShare }) {
   const dark = useTheme();
+  const lang = useLang();
   const P = dark ? DARK : LIGHT;
   return (
-    <div style={{paddingBottom:90}}>
-      <AQIPanel aqi={aqi}/>
+    <div style={{paddingBottom:90, animation:'tab-fade-in 0.3s ease both'}}>
+      <AQIPanel aqi={aqi} liveSource={liveSource} onShare={onShare}/>
       <div style={{height:1, background:P.rule}}/>
       <div style={{padding:'14px 0 0'}}>
         <LessonCards done={lessonDone} onDone={onLessonDone}/>
       </div>
       <div style={{height:1, background:P.rule, margin:'14px 0'}}/>
-      <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', padding:'0 20px', marginBottom:10}}>What to do today</div>
+      <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', padding:'0 20px', marginBottom:10}}>{t('tipsTitle',lang)}</div>
       <div style={{display:'flex', gap:10, padding:'0 14px', overflowX:'auto', paddingBottom:4}}>
         {TIPS.map((t,i) => <TipCard key={i} tip={t} idx={i}/>)}
         <div style={{width:6, flexShrink:0}}/>
@@ -644,7 +846,7 @@ function Dashboard({ aqi, score, streak, lessonDone, onLessonDone, onBadges }) {
       <div style={{height:1, background:P.rule, margin:'14px 0'}}/>
       <div style={{display:'flex', gap:0}}>
         <div style={{flex:1, padding:'0 18px', borderRight:`1px solid ${P.rule}`}}>
-          <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:12}}>Eco Score</div>
+          <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:12}}>{t('ecoScore',lang)}</div>
           <div style={{display:'flex', alignItems:'center', gap:12}}>
             <div style={{position:'relative', width:52, height:52}}>
               <Ring value={score} size={52} stroke={4} color={P.lime}/>
@@ -658,8 +860,8 @@ function Dashboard({ aqi, score, streak, lessonDone, onLessonDone, onBadges }) {
         </div>
         <div style={{flex:1, padding:'0 14px'}}>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
-            <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase'}}>Badges</div>
-            <button onClick={onBadges} style={{background:'none',border:'none',fontSize:11,color:P.lime,fontWeight:700,cursor:'pointer',fontFamily:'Plus Jakarta Sans,sans-serif'}}>See all</button>
+            <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase'}}>{t('badges',lang)}</div>
+            <button onClick={()=>{playClick();onBadges();}} style={{background:'none',border:'none',fontSize:11,color:P.lime,fontWeight:700,cursor:'pointer',fontFamily:'Plus Jakarta Sans,sans-serif'}}>{t('seeAll',lang)}</button>
           </div>
           <div style={{display:'flex', gap:8}}>
             {BADGES.slice(0,4).map((b,i) => (
@@ -695,14 +897,15 @@ const DISTRICTS = [
 
 function MapScreen({ aqi }) {
   const dark = useTheme();
+  const lang = useLang();
   const P = dark ? DARK : LIGHT;
   const [selected, setSelected] = useState(null);
 
   return (
-    <div style={{paddingBottom:90}}>
+    <div style={{paddingBottom:90, animation:'tab-fade-in 0.3s ease both'}}>
       <div style={{padding:'18px 20px 12px'}}>
-        <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text, marginBottom:4}}>Air Quality Map</div>
-        <div style={{fontSize:12, color:P.textMid}}>Almaty districts \u00b7 Live data</div>
+        <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text, marginBottom:4}}>{t('aqiMap',lang)}</div>
+        <div style={{fontSize:12, color:P.textMid}}>{t('districts',lang)}</div>
       </div>
 
       {/* SVG Map */}
@@ -746,7 +949,7 @@ function MapScreen({ aqi }) {
 
       {/* Legend */}
       <div style={{padding:'14px 20px 0'}}>
-        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:10}}>AQI scale</div>
+        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:10}}>{t('aqiScale',lang)}</div>
         <div style={{display:'flex', gap:8, flexWrap:'wrap'}}>
           {[[50,'Good','#3a9e50'],[100,'Moderate','#c99010'],[150,'Sensitive','#c96418'],[200,'Unhealthy','#b83030'],[300,'Very Unhealthy','#7c5cbf']].map(([max,label,color]) => (
             <div key={label} style={{display:'flex', alignItems:'center', gap:5}}>
@@ -791,6 +994,7 @@ const QUIZ = [
 
 function ChallengeScreen({ score, onScoreUp }) {
   const dark = useTheme();
+  const lang = useLang();
   const P = dark ? DARK : LIGHT;
   const [qIdx, setQIdx] = useState(0);
   const [picked, setPicked] = useState(null);
@@ -800,6 +1004,7 @@ function ChallengeScreen({ score, onScoreUp }) {
 
   function answer(i) {
     if (picked !== null) return;
+    playClick();
     setPicked(i);
     const isRight = i === QUIZ[qIdx].ans;
     if (isRight) setCorrect(c=>c+1);
@@ -812,11 +1017,11 @@ function ChallengeScreen({ score, onScoreUp }) {
   if (done) {
     const pts = correct * 3;
     return (
-      <div style={{padding:'30px 20px', display:'flex', flexDirection:'column', alignItems:'center', paddingBottom:90, position:'relative'}}>
+      <div style={{padding:'30px 20px', display:'flex', flexDirection:'column', alignItems:'center', paddingBottom:90, position:'relative', animation:'tab-fade-in 0.3s ease both'}}>
         <Confetti active={confetti} onDone={()=>setConfetti(false)}/>
         <div style={{fontSize:60, marginBottom:16, animation:'badge-pop 0.6s ease both'}}>{correct===3?'🏆':correct>=2?'🌟':'💪'}</div>
         <div style={{fontFamily:'DM Serif Display,serif', fontSize:28, color:P.text, marginBottom:6, textAlign:'center'}}>
-          {correct}/3 correct!
+          {correct}/3 {t('correct',lang)}
         </div>
         <div style={{fontSize:14, color:P.textMid, textAlign:'center', marginBottom:24}}>
           {correct===3?'Perfect score! You\u2019re an eco expert.':correct>=2?'Great job! Keep learning.':'Good try! Read today\u2019s lesson to level up.'}
@@ -825,22 +1030,22 @@ function ChallengeScreen({ score, onScoreUp }) {
           background:`${P.lime}18`, border:`1.5px solid ${P.lime}44`,
           borderRadius:16, padding:'16px 24px', textAlign:'center', marginBottom:24,
         }}>
-          <div style={{fontSize:11, letterSpacing:2, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:4}}>Points earned</div>
+          <div style={{fontSize:11, letterSpacing:2, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:4}}>{t('ptsEarned',lang)}</div>
           <div style={{fontFamily:'DM Serif Display,serif', fontSize:36, color:P.lime}}>+{pts}</div>
         </div>
         <button onClick={()=>{setQIdx(0);setPicked(null);setCorrect(0);setDone(false);}} style={{
           background:P.lime, color:dark?'#0a1a0e':'#fff', border:'none', borderRadius:12,
           padding:'12px 28px', fontFamily:'Plus Jakarta Sans,sans-serif', fontWeight:700, fontSize:14, cursor:'pointer',
-        }}>Try again</button>
+        }}>{t('tryAgain',lang)}</button>
       </div>
     );
   }
 
   const q = QUIZ[qIdx];
   return (
-    <div style={{padding:'20px 20px 90px'}}>
-      <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text, marginBottom:4}}>Daily Challenge</div>
-      <div style={{fontSize:12, color:P.textMid, marginBottom:20}}>3 quick questions about today\u2019s air</div>
+    <div style={{padding:'20px 20px 90px', animation:'tab-fade-in 0.3s ease both'}}>
+      <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text, marginBottom:4}}>{t('dailyChallenge',lang)}</div>
+      <div style={{fontSize:12, color:P.textMid, marginBottom:20}}>{t('qDesc',lang)}</div>
 
       {/* Progress */}
       <div style={{display:'flex', gap:6, marginBottom:24}}>
@@ -854,7 +1059,7 @@ function ChallengeScreen({ score, onScoreUp }) {
           background:P.card, border:`1px solid ${P.border}`, borderRadius:20,
           padding:'20px', marginBottom:14,
         }}>
-          <div style={{fontSize:11, letterSpacing:2, fontWeight:700, color:P.lime, textTransform:'uppercase', marginBottom:10}}>Question {qIdx+1}</div>
+          <div style={{fontSize:11, letterSpacing:2, fontWeight:700, color:P.lime, textTransform:'uppercase', marginBottom:10}}>{t('question',lang)} {qIdx+1}</div>
           <div style={{fontFamily:'DM Serif Display,serif', fontSize:19, color:P.text, lineHeight:1.4}}>{q.q}</div>
         </div>
 
@@ -901,12 +1106,13 @@ const MEDAL = {1:'🥇',2:'🥈',3:'🥉'};
 
 function FriendsScreen() {
   const dark = useTheme();
+  const lang = useLang();
   const P = dark ? DARK : LIGHT;
   return (
-    <div style={{paddingBottom:90}}>
+    <div style={{paddingBottom:90, animation:'tab-fade-in 0.3s ease both'}}>
       <div style={{padding:'18px 20px 12px'}}>
-        <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text, marginBottom:4}}>Leaderboard</div>
-        <div style={{fontSize:12, color:P.textMid}}>Your class this week</div>
+        <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text, marginBottom:4}}>{t('leaderboard',lang)}</div>
+        <div style={{fontSize:12, color:P.textMid}}>{t('yourClass',lang)}</div>
       </div>
 
       {/* Top 3 podium */}
@@ -982,12 +1188,13 @@ function ProfileScreen({ score, streak, onDark, dark }) {
   ];
   const bars = [5,3,7,4,6,7,5], days = ['M','T','W','T','F','S','S'];
 
+  const lang = useLang();
   if (showBadges) {
     return (
       <div style={{paddingBottom:90}}>
         <div style={{padding:'18px 20px 12px', display:'flex', alignItems:'center', gap:12}}>
-          <button onClick={()=>setShowBadges(false)} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:P.text}}>←</button>
-          <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text}}>All Badges</div>
+          <button onClick={()=>{playClick();setShowBadges(false);}} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:P.text}}>←</button>
+          <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text}}>{t('badges',lang)}</div>
         </div>
         <div style={{padding:'0 14px'}}>
           {BADGES.map((b,i) => (
@@ -1023,9 +1230,9 @@ function ProfileScreen({ score, streak, onDark, dark }) {
   }
 
   return (
-    <div style={{paddingBottom:90}}>
+    <div style={{paddingBottom:90, animation:'tab-fade-in 0.3s ease both'}}>
       <div style={{padding:'18px 20px 16px'}}>
-        <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text, marginBottom:18}}>Profile</div>
+        <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text, marginBottom:18}}>{t('profile',lang)}</div>
         <div style={{display:'flex', alignItems:'center', gap:14}}>
           <div style={{
             width:60, height:60, borderRadius:'50%',
@@ -1053,7 +1260,7 @@ function ProfileScreen({ score, streak, onDark, dark }) {
       <div style={{height:1, background:P.rule}}/>
 
       <div style={{padding:'16px 20px'}}>
-        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:14}}>Eco Score</div>
+        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:14}}>{t('ecoScore',lang)}</div>
         <div style={{display:'flex', alignItems:'center', gap:20}}>
           <div style={{position:'relative', width:80, height:80}}>
             <Ring value={score} size={80} stroke={5} color={P.lime} delay={200}/>
@@ -1072,7 +1279,7 @@ function ProfileScreen({ score, streak, onDark, dark }) {
       <div style={{height:1, background:P.rule}}/>
 
       <div style={{padding:'16px 20px'}}>
-        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:12}}>Score breakdown</div>
+        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:12}}>{t('scoreBreak',lang)}</div>
         {breakdown.map((b,i) => (
           <div key={i} style={{display:'flex', alignItems:'center', gap:12, marginBottom:10}}>
             <div style={{width:108, fontSize:12, color:P.textMid}}>{b.label}</div>
@@ -1087,7 +1294,7 @@ function ProfileScreen({ score, streak, onDark, dark }) {
       <div style={{height:1, background:P.rule}}/>
 
       <div style={{padding:'16px 20px'}}>
-        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:12}}>This week</div>
+        <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase', marginBottom:12}}>{t('thisWeek',lang)}</div>
         <div style={{background:P.card, border:`1px solid ${P.border}`, borderRadius:16, padding:'14px 12px', display:'flex', justifyContent:'space-between', alignItems:'flex-end'}}>
           {days.map((d,i) => {
             const isToday = i===6;
@@ -1109,8 +1316,8 @@ function ProfileScreen({ score, streak, onDark, dark }) {
 
       <div style={{padding:'16px 20px'}}>
         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14}}>
-          <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase'}}>Badges</div>
-          <button onClick={()=>setShowBadges(true)} style={{background:'none', border:'none', fontSize:11, color:P.lime, fontWeight:700, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>See all ({BADGES.filter(b=>!b.earned).length} locked)</button>
+          <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase'}}>{t('badges',lang)}</div>
+          <button onClick={()=>{playClick();setShowBadges(true);}} style={{background:'none', border:'none', fontSize:11, color:P.lime, fontWeight:700, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>{t('seeAll',lang)} ({BADGES.filter(b=>!b.earned).length})</button>
         </div>
         <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
           {BADGES.map((b,i) => (
@@ -1140,6 +1347,7 @@ const NOTIFS = [
 ];
 function Notifications({ onClose }) {
   const dark = useTheme();
+  const lang = useLang();
   const P = dark ? DARK : LIGHT;
   return (
     <div style={{
@@ -1148,7 +1356,7 @@ function Notifications({ onClose }) {
       paddingBottom:40, overflowY:'auto',
     }}>
       <div style={{padding:'60px 20px 14px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text}}>Notifications</div>
+        <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text}}>{t('notifs',lang)}</div>
         <button onClick={onClose} style={{background:'none',border:'none',fontSize:22,cursor:'pointer',color:P.textMid}}>✕</button>
       </div>
       {NOTIFS.map((n,i) => (
@@ -1287,8 +1495,87 @@ function BottomNav({ tab, onTab, dark }) {
 // ── App root ──────────────────────────────────────────────────
 const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{"accentColor":"#3a8c50","darkMode":false}/*EDITMODE-END*/;
 
+// ── Share overlay ─────────────────────────────────────────────
+function ShareOverlay({ aqi, onClose, dark }) {
+  const lang = useLang();
+  const P = dark ? DARK : LIGHT;
+  const meta = aqiMeta(aqi, lang);
+  const date = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  return (
+    <div style={{position:'absolute', inset:0, zIndex:250, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', animation:'fade-in-quick 0.2s ease both'}}
+      onClick={onClose}>
+      <div onClick={e=>e.stopPropagation()} style={{
+        width:280, borderRadius:24, overflow:'hidden',
+        background:`linear-gradient(160deg, #0d2013 0%, ${meta.color}33 100%)`,
+        padding:'28px 24px', textAlign:'center',
+        animation:'share-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) both',
+        border:'1px solid rgba(255,255,255,0.1)',
+      }}>
+        <div style={{fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:3, textTransform:'uppercase', marginBottom:16}}>ECOALMATY</div>
+        <div style={{fontSize:56, marginBottom:8}}>{meta.emoji}</div>
+        <div style={{fontFamily:'DM Serif Display,serif', fontSize:64, color:meta.color, lineHeight:1, marginBottom:4}}>{aqi}</div>
+        <div style={{fontSize:12, color:'rgba(255,255,255,0.5)', letterSpacing:2, textTransform:'uppercase', marginBottom:16}}>AQI INDEX</div>
+        <div style={{display:'inline-flex', alignItems:'center', gap:6, background:`${meta.color}22`, border:`1px solid ${meta.color}44`, borderRadius:99, padding:'5px 14px', marginBottom:16}}>
+          <div style={{width:6,height:6,borderRadius:'50%',background:meta.color}}/>
+          <span style={{fontSize:12, fontWeight:700, color:meta.color}}>{meta.label}</span>
+        </div>
+        <div style={{fontSize:13, color:'rgba(255,255,255,0.7)', lineHeight:1.5, marginBottom:20}}>{meta.msg}</div>
+        <div style={{fontSize:10, color:'rgba(255,255,255,0.3)'}}>Almaty \u00b7 {date}</div>
+        <div style={{marginTop:16, display:'flex', gap:8, justifyContent:'center'}}>
+          <button onClick={()=>{navigator.clipboard?.writeText(`Almaty AQI: ${aqi} (${meta.label}) — ${meta.msg} #EcoAlmaty`); onClose();}} style={{
+            background:meta.color, color:'#fff', border:'none', borderRadius:10, padding:'8px 16px',
+            fontFamily:'Plus Jakarta Sans,sans-serif', fontWeight:700, fontSize:12, cursor:'pointer',
+          }}>Copy text</button>
+          <button onClick={onClose} style={{
+            background:'rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.7)', border:'none', borderRadius:10, padding:'8px 16px',
+            fontFamily:'Plus Jakarta Sans,sans-serif', fontWeight:600, fontSize:12, cursor:'pointer',
+          }}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Loading screen ───────────────────────────────────────────
+function LoadingScreen({ onDone }) {
+  const [phase, setPhase] = useState(0);
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase(1), 400);
+    const t2 = setTimeout(() => setPhase(2), 1200);
+    const t3 = setTimeout(() => onDone(), 2000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
+  return (
+    <div style={{
+      position:'fixed', inset:0, zIndex:9999,
+      background:'linear-gradient(160deg, #0a1a0e 0%, #132a17 100%)',
+      display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+      animation: phase===2 ? 'loader-fade-out 0.5s ease 0.3s forwards' : 'none',
+    }}>
+      <div style={{
+        width:80, height:80, borderRadius:22,
+        background:'rgba(168,230,61,0.12)', border:'1.5px solid rgba(168,230,61,0.3)',
+        display:'flex', alignItems:'center', justifyContent:'center', fontSize:40, marginBottom:20,
+        animation: phase>=1 ? 'logo-pulse 0.7s cubic-bezier(0.34,1.56,0.64,1) both' : 'none',
+        opacity: phase>=1?1:0,
+      }}>🌿</div>
+      <div style={{
+        fontFamily:'DM Serif Display,serif', fontSize:28, color:'#f0f4f0', letterSpacing:1,
+        animation: phase>=1 ? 'logo-text-in 0.5s ease 0.2s both' : 'none',
+        opacity: phase>=1?1:0,
+      }}>EcoAlmaty</div>
+      <div style={{
+        fontSize:11, color:'rgba(240,244,240,0.4)', marginTop:8, letterSpacing:3, textTransform:'uppercase',
+        animation: phase>=1 ? 'logo-text-in 0.5s ease 0.4s both' : 'none',
+        opacity: phase>=1?1:0,
+      }}>breathe better</div>
+    </div>
+  );
+}
+
 function App() {
   const saved = JSON.parse(localStorage.getItem('ecoa4')||'{}');
+  const [loading, setLoading] = useState(true);
   const [onboard, setOnboard] = useState(!saved.onboarded);
   const [tab, setTab] = useState(saved.tab||'today');
   const [aqi, setAqi] = useState(saved.aqi??140);
@@ -1298,14 +1585,32 @@ function App() {
   const [dark, setDark] = useState(saved.dark??false);
   const [tweaks, setTweaks] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
+  const [lang, setLang] = useState(saved.lang||'en');
+  const [liveSource, setLiveSource] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   const P = dark ? DARK : LIGHT;
-  const meta = aqiMeta(aqi);
+  const meta = aqiMeta(aqi, lang);
 
   const persist = p => {
     const c = JSON.parse(localStorage.getItem('ecoa4')||'{}');
     localStorage.setItem('ecoa4', JSON.stringify({...c,...p}));
   };
+
+  // Fetch real AQI data from Almaty
+  useEffect(() => {
+    fetch('https://api.waqi.info/feed/almaty/?token=demo')
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'ok' && data.data?.aqi) {
+          const realAqi = Math.min(300, Math.max(0, data.data.aqi));
+          setAqi(realAqi);
+          setLiveSource(true);
+          persist({aqi: realAqi});
+        }
+      })
+      .catch(() => {/* fallback to default/saved AQI */});
+  }, []);
 
   useEffect(() => {
     const h = e => {
@@ -1317,10 +1622,14 @@ function App() {
     return ()=>window.removeEventListener('message',h);
   },[]);
 
-  function toggleDark() { const d=!dark; setDark(d); persist({dark:d}); }
+  function toggleDark() { playClick(); const d=!dark; setDark(d); persist({dark:d}); }
+  function cycleLang() { playClick(); const langs=['en','kz','ru']; const next=langs[(langs.indexOf(lang)+1)%3]; setLang(next); persist({lang:next}); }
+
+  if (loading) return <LoadingScreen onDone={() => setLoading(false)} />;
 
   return (
     <ThemeCtx.Provider value={dark}>
+    <LangCtx.Provider value={lang}>
       <div style={{width:'100vw',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:dark?'#050e07':'#d8ecd9',position:'relative'}}>
         {/* AQI sim bar */}
         <div style={{
@@ -1333,7 +1642,7 @@ function App() {
         }}>
           <span style={{fontSize:9.5, letterSpacing:2.5, fontWeight:700, color:P.textDim, textTransform:'uppercase', whiteSpace:'nowrap'}}>Simulate AQI</span>
           <input type="range" min={0} max={300} value={aqi}
-            onChange={e=>{const v=+e.target.value; setAqi(v); persist({aqi:v});}}
+            onChange={e=>{const v=+e.target.value; setAqi(v); setLiveSource(false); persist({aqi:v});}}
             style={{flex:1, accentColor:P.lime, cursor:'pointer'}}/>
           <span style={{fontFamily:'DM Serif Display,serif', fontSize:15, color:meta.color, width:32, textAlign:'right', transition:'color 0.3s'}}>{aqi}</span>
         </div>
@@ -1359,15 +1668,22 @@ function App() {
                 }}>
                   <div style={{fontFamily:'DM Serif Display,serif', fontSize:18, color:P.text, display:'flex', alignItems:'center', gap:7}}>
                     <div style={{width:7,height:7,borderRadius:'50%',background:P.lime,animation:'breathe 2.5s ease-in-out infinite'}}/>
-                    EcoAlmaty
+                    {t('appName',lang)}
                   </div>
-                  <div style={{display:'flex', alignItems:'center', gap:10}}>
+                  <div style={{display:'flex', alignItems:'center', gap:6}}>
+                    {/* Language toggle */}
+                    <button onClick={cycleLang} style={{
+                      background:P.limeDim, border:`1px solid ${P.lime}44`, borderRadius:6,
+                      padding:'3px 8px', fontSize:10, fontWeight:700, color:P.lime,
+                      cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif',
+                      textTransform:'uppercase', letterSpacing:1,
+                    }}>{lang}</button>
                     <div style={{
                       background:`${meta.color}18`, border:`1px solid ${meta.color}33`,
                       borderRadius:99, padding:'3px 10px', fontSize:11, fontWeight:700, color:meta.color,
                       display:'flex', alignItems:'center', gap:4,
                     }}>🔥 <FlipNum v={streak}/></div>
-                    <button onClick={()=>setShowNotifs(true)} style={{
+                    <button onClick={()=>{playClick();setShowNotifs(true);}} style={{
                       background:'none', border:`1px solid ${P.border}`, borderRadius:'50%',
                       width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center',
                       cursor:'pointer', fontSize:16, position:'relative',
@@ -1381,6 +1697,7 @@ function App() {
                 {/* Screen content */}
                 <div style={{height:'100%', overflowY:'auto', paddingTop:98}}>
                   {tab==='today' && <Dashboard aqi={aqi} score={score} streak={streak} lessonDone={lessonDone}
+                    liveSource={liveSource} onShare={()=>setShowShare(true)}
                     onLessonDone={() => { setLessonDone(true); setScore(s=>{const n=Math.min(100,s+5); persist({score:n}); return n;}); persist({lessonDone:true}); }}
                     onBadges={() => setTab('profile')}
                   />}
@@ -1390,7 +1707,7 @@ function App() {
                   {tab==='profile' && <ProfileScreen score={score} streak={streak} dark={dark} onDark={toggleDark}/>}
                 </div>
 
-                <BottomNav tab={tab} onTab={t=>{setTab(t); persist({tab:t});}} dark={dark}/>
+                <BottomNav tab={tab} onTab={tb=>{playClick();setTab(tb); persist({tab:tb});}} dark={dark}/>
 
                 {/* Notifications overlay */}
                 {showNotifs && (
@@ -1420,11 +1737,14 @@ function App() {
                     </div>
                   </div>
                 )}
+                {/* Share overlay */}
+                {showShare && <ShareOverlay aqi={aqi} dark={dark} onClose={()=>setShowShare(false)}/>}
               </>
             )}
           </div>
         </IOSDevice>
       </div>
+    </LangCtx.Provider>
     </ThemeCtx.Provider>
   );
 }
