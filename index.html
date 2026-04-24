@@ -453,6 +453,25 @@ const T = {
     aiGen: 'AI-generated lesson',
     generating: 'Generating with AI...',
     liveData: 'Live data from Almaty station',
+    noted: 'Noted',
+    ecoAware: 'Eco-aware',
+    ptsWeek: '+4 pts this week',
+    ptsMonth: '+12 pts this month',
+    top22: 'Top 22% in Almaty',
+    dailyLessons: 'Daily lessons', transport: 'Transport', wasteSorting: 'Waste sorting',
+    energyHabits: 'Energy habits', community: 'Community',
+    districtStation: 'District monitoring station',
+    perfect: 'Perfect score! You\u2019re an eco expert.',
+    great: 'Great job! Keep learning.',
+    goodTry: 'Good try! Read today\u2019s lesson to level up.',
+    tabToday: 'Today', tabMap: 'Map', tabChallenge: 'Challenge', tabFriends: 'Friends', tabProfile: 'Profile',
+    allBadges: 'All Badges',
+    lightMode: 'Light', darkMode: 'Dark',
+    resetLesson: 'Reset lesson', restartOnb: 'Restart onboarding',
+    switchLight: 'Switch to Light', switchDark: 'Switch to Dark',
+    name: 'Aidan', location: 'Almaty, Kazakhstan',
+    streak: 'day streak',
+    locked: 'locked',
   },
   kz: {
     appName: 'ЭкоАлматы',
@@ -499,6 +518,25 @@ const T = {
     aiGen: 'AI жасаған сабақ',
     generating: 'AI генерациялауда...',
     liveData: 'Алматы станциясынан тікелей деректер',
+    noted: 'Белгіленді',
+    ecoAware: 'Эко-сауатты',
+    ptsWeek: '+4 ұпай осы аптада',
+    ptsMonth: '+12 ұпай осы айда',
+    top22: 'Алматыда үздік 22%',
+    dailyLessons: 'Күнделікті сабақтар', transport: 'Көлік', wasteSorting: 'Қоқыс сұрыптау',
+    energyHabits: 'Энергия тұтыну', community: 'Қоғамдастық',
+    districtStation: 'Аудан мониторинг станциясы',
+    perfect: 'Тамаша нәтиже! Сіз эко-сарапшысыз.',
+    great: 'Жарайсыз! Оқуды жалғастырыңыз.',
+    goodTry: 'Жаман емес! Бүгінгі сабақты оқыңыз.',
+    tabToday: 'Бүгін', tabMap: 'Карта', tabChallenge: 'Сынақ', tabFriends: 'Достар', tabProfile: 'Профиль',
+    allBadges: 'Барлық жетістіктер',
+    lightMode: 'Жарық', darkMode: 'Қараңғы',
+    resetLesson: 'Сабақты қалпына келтіру', restartOnb: 'Қайта бастау',
+    switchLight: 'Жарықтауға ауысу', switchDark: 'Қараңғыға ауысу',
+    name: 'Айдан', location: 'Алматы, Қазақстан',
+    streak: 'күндік серия',
+    locked: 'жабық',
   },
   ru: {
     appName: 'ЭкоАлматы',
@@ -545,6 +583,25 @@ const T = {
     aiGen: 'Урок от AI',
     generating: 'AI генерирует...',
     liveData: 'Данные со станции в Алматы',
+    noted: 'Отмечено',
+    ecoAware: 'Эко-сознательный',
+    ptsWeek: '+4 балла за неделю',
+    ptsMonth: '+12 баллов за месяц',
+    top22: 'Топ 22% в Алматы',
+    dailyLessons: 'Ежедневные уроки', transport: 'Транспорт', wasteSorting: 'Сортировка мусора',
+    energyHabits: 'Энергия', community: 'Сообщество',
+    districtStation: 'Станция мониторинга района',
+    perfect: 'Идеально! Вы эко-эксперт.',
+    great: 'Отлично! Продолжайте учиться.',
+    goodTry: 'Неплохо! Прочитайте сегодняшний урок.',
+    tabToday: 'Сегодня', tabMap: 'Карта', tabChallenge: 'Вызов', tabFriends: 'Друзья', tabProfile: 'Профиль',
+    allBadges: 'Все достижения',
+    lightMode: 'Светлая', darkMode: 'Тёмная',
+    resetLesson: 'Сбросить урок', restartOnb: 'Перезапустить',
+    switchLight: 'Светлая тема', switchDark: 'Тёмная тема',
+    name: 'Айдан', location: 'Алматы, Казахстан',
+    streak: 'дней подряд',
+    locked: 'закрыто',
   },
 };
 
@@ -810,7 +867,7 @@ function TipCard({ tip, idx }) {
     }}>
       <div style={{width:7,height:7,borderRadius:'50%',background:tip.color,marginBottom:10}}/>
       <p style={{fontSize:13, fontWeight:500, color:P.text, lineHeight:1.5, textDecoration:noted?'line-through':'none'}}>{tip.text}</p>
-      {noted && <div style={{fontSize:11,color:tip.color,fontWeight:700,marginTop:6,animation:'fade-in-quick 0.2s ease both'}}>Noted \u2713</div>}
+      {noted && <div style={{fontSize:11,color:tip.color,fontWeight:700,marginTop:6,animation:'fade-in-quick 0.2s ease both'}}>{t('noted',useLang())} \u2713</div>}
     </div>
   );
 }
@@ -853,8 +910,8 @@ function Dashboard({ aqi, score, streak, lessonDone, onLessonDone, onBadges, liv
               <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'DM Serif Display,serif',fontSize:14,color:P.lime}}>{score}</div>
             </div>
             <div>
-              <div style={{fontSize:14, fontWeight:600, color:P.text}}>Eco-aware</div>
-              <div style={{fontSize:11, color:P.lime}}>+4 pts this week</div>
+              <div style={{fontSize:14, fontWeight:600, color:P.text}}>{t('ecoAware',lang)}</div>
+              <div style={{fontSize:11, color:P.lime}}>{t('ptsWeek',lang)}</div>
             </div>
           </div>
         </div>
@@ -970,7 +1027,7 @@ function MapScreen({ aqi }) {
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
               <div style={{fontSize:16, fontWeight:700, color:P.text}}>{DISTRICTS[selected].name}</div>
-              <div style={{fontSize:12, color:P.textMid}}>District monitoring station</div>
+              <div style={{fontSize:12, color:P.textMid}}>{t('districtStation',lang)}</div>
             </div>
             <div style={{textAlign:'right'}}>
               <div style={{fontFamily:'DM Serif Display,serif', fontSize:32, color:aqiMeta(Math.max(0,Math.min(300,aqi+DISTRICTS[selected].aqiOffset))).color, lineHeight:1}}>
@@ -1024,7 +1081,7 @@ function ChallengeScreen({ score, onScoreUp }) {
           {correct}/3 {t('correct',lang)}
         </div>
         <div style={{fontSize:14, color:P.textMid, textAlign:'center', marginBottom:24}}>
-          {correct===3?'Perfect score! You\u2019re an eco expert.':correct>=2?'Great job! Keep learning.':'Good try! Read today\u2019s lesson to level up.'}
+          {correct===3?t('perfect',lang):correct>=2?t('great',lang):t('goodTry',lang)}
         </div>
         <div style={{
           background:`${P.lime}18`, border:`1.5px solid ${P.lime}44`,
@@ -1180,11 +1237,11 @@ function ProfileScreen({ score, streak, onDark, dark }) {
   const P = dark ? DARK : LIGHT;
   const [showBadges, setShowBadges] = useState(false);
   const breakdown = [
-    {label:'Daily lessons',  pts:25, color:P.lime},
-    {label:'Transport',      pts:18, color:P.sage},
-    {label:'Waste sorting',  pts:12, color:P.lime},
-    {label:'Energy habits',  pts:8,  color:P.amber},
-    {label:'Community',      pts:5,  color:P.sage},
+    {label:t('dailyLessons',lang),  pts:25, color:P.lime},
+    {label:t('transport',lang),     pts:18, color:P.sage},
+    {label:t('wasteSorting',lang),  pts:12, color:P.lime},
+    {label:t('energyHabits',lang),  pts:8,  color:P.amber},
+    {label:t('community',lang),     pts:5,  color:P.sage},
   ];
   const bars = [5,3,7,4,6,7,5], days = ['M','T','W','T','F','S','S'];
 
@@ -1194,7 +1251,7 @@ function ProfileScreen({ score, streak, onDark, dark }) {
       <div style={{paddingBottom:90}}>
         <div style={{padding:'18px 20px 12px', display:'flex', alignItems:'center', gap:12}}>
           <button onClick={()=>{playClick();setShowBadges(false);}} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:P.text}}>←</button>
-          <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text}}>{t('badges',lang)}</div>
+          <div style={{fontFamily:'DM Serif Display,serif', fontSize:22, color:P.text}}>{t('allBadges',lang)}</div>
         </div>
         <div style={{padding:'0 14px'}}>
           {BADGES.map((b,i) => (
@@ -1241,9 +1298,9 @@ function ProfileScreen({ score, streak, onDark, dark }) {
             fontSize:24, fontWeight:700, color:dark?'#0a1a0e':'#fff',
           }}>A</div>
           <div>
-            <div style={{fontSize:18, fontWeight:600, color:P.text}}>Aidan</div>
-            <div style={{fontSize:12, color:P.textMid}}>Almaty, Kazakhstan</div>
-            <div style={{fontSize:11, color:P.amber, marginTop:2}}>🔥 <FlipNum v={streak}/>-day streak</div>
+            <div style={{fontSize:18, fontWeight:600, color:P.text}}>{t('name',lang)}</div>
+            <div style={{fontSize:12, color:P.textMid}}>{t('location',lang)}</div>
+            <div style={{fontSize:11, color:P.amber, marginTop:2}}>🔥 <FlipNum v={streak}/> {t('streak',lang)}</div>
           </div>
           {/* Dark mode toggle */}
           <div style={{marginLeft:'auto'}}>
@@ -1252,7 +1309,7 @@ function ProfileScreen({ score, streak, onDark, dark }) {
               borderRadius:99, padding:'6px 14px',
               fontSize:12, fontWeight:700, color:dark?'#0a1a0e':P.lime,
               cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif',
-            }}>{dark?'☀️ Light':'🌙 Dark'}</button>
+            }}>{dark?'☀️ '+t('lightMode',lang):'🌙 '+t('darkMode',lang)}</button>
           </div>
         </div>
       </div>
@@ -1269,9 +1326,9 @@ function ProfileScreen({ score, streak, onDark, dark }) {
             </div>
           </div>
           <div>
-            <div style={{fontFamily:'DM Serif Display,serif', fontSize:20, color:P.text, marginBottom:2}}>Eco-aware</div>
-            <div style={{fontSize:12, color:P.textMid}}>Top 22% in Almaty</div>
-            <div style={{fontSize:11, color:P.lime, marginTop:2}}>+12 pts this month</div>
+            <div style={{fontFamily:'DM Serif Display,serif', fontSize:20, color:P.text, marginBottom:2}}>{t('ecoAware',lang)}</div>
+            <div style={{fontSize:12, color:P.textMid}}>{t('top22',lang)}</div>
+            <div style={{fontSize:11, color:P.lime, marginTop:2}}>{t('ptsMonth',lang)}</div>
           </div>
         </div>
       </div>
@@ -1317,7 +1374,7 @@ function ProfileScreen({ score, streak, onDark, dark }) {
       <div style={{padding:'16px 20px'}}>
         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14}}>
           <div style={{fontSize:9.5, letterSpacing:3, fontWeight:700, color:P.textDim, textTransform:'uppercase'}}>{t('badges',lang)}</div>
-          <button onClick={()=>{playClick();setShowBadges(true);}} style={{background:'none', border:'none', fontSize:11, color:P.lime, fontWeight:700, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>{t('seeAll',lang)} ({BADGES.filter(b=>!b.earned).length})</button>
+          <button onClick={()=>{playClick();setShowBadges(true);}} style={{background:'none', border:'none', fontSize:11, color:P.lime, fontWeight:700, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>{t('seeAll',lang)} ({BADGES.filter(b=>!b.earned).length} {t('locked',lang)})</button>
         </div>
         <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
           {BADGES.map((b,i) => (
@@ -1463,14 +1520,15 @@ function Onboarding({ onDone }) {
 
 // ── Bottom nav ────────────────────────────────────────────────
 const NAV_TABS = [
-  {id:'today',     label:'Today',     icon:'🌿'},
-  {id:'map',       label:'Map',       icon:'🗺'},
-  {id:'challenge', label:'Challenge', icon:'⚡'},
-  {id:'friends',   label:'Friends',   icon:'👥'},
-  {id:'profile',   label:'Profile',   icon:'👤'},
+  {id:'today',     labelKey:'tabToday',     icon:'🌿'},
+  {id:'map',       labelKey:'tabMap',       icon:'🗺'},
+  {id:'challenge', labelKey:'tabChallenge', icon:'⚡'},
+  {id:'friends',   labelKey:'tabFriends',   icon:'👥'},
+  {id:'profile',   labelKey:'tabProfile',   icon:'👤'},
 ];
 function BottomNav({ tab, onTab, dark }) {
   const P = dark ? DARK : LIGHT;
+  const lang = useLang();
   return (
     <div style={{
       position:'absolute', bottom:0, left:0, right:0, zIndex:50,
@@ -1478,14 +1536,14 @@ function BottomNav({ tab, onTab, dark }) {
       borderTop:`1px solid ${P.rule}`,
       display:'flex', padding:'8px 0 24px',
     }}>
-      {NAV_TABS.map(t => (
-        <button key={t.id} onClick={()=>onTab(t.id)} style={{
+      {NAV_TABS.map(nt => (
+        <button key={nt.id} onClick={()=>onTab(nt.id)} style={{
           flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2,
           background:'none', border:'none', cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif',
-          color:tab===t.id?P.lime:P.textDim, transition:'color 0.2s ease',
+          color:tab===nt.id?P.lime:P.textDim, transition:'color 0.2s ease',
         }}>
-          <div style={{fontSize:18, transform:tab===t.id?'scale(1.18)':'scale(1)', transition:'transform 0.25s cubic-bezier(0.34,1.56,0.64,1)'}}>{t.icon}</div>
-          <span style={{fontSize:9.5, fontWeight:tab===t.id?700:400}}>{t.label}</span>
+          <div style={{fontSize:18, transform:tab===nt.id?'scale(1.18)':'scale(1)', transition:'transform 0.25s cubic-bezier(0.34,1.56,0.64,1)'}}>{nt.icon}</div>
+          <span style={{fontSize:9.5, fontWeight:tab===nt.id?700:400}}>{t(nt.labelKey,lang)}</span>
         </button>
       ))}
     </div>
@@ -1731,9 +1789,9 @@ function App() {
                         <input type="range" min={10} max={100} value={score} onChange={e=>setScore(+e.target.value)} style={{width:'100%', accentColor:P.lime}}/>
                         <div style={{fontSize:12, color:P.lime, textAlign:'right'}}>{score}</div>
                       </div>
-                      <button onClick={()=>{setDark(d=>!d);}} style={{background:P.limeDim, border:`1px solid ${P.lime}44`, borderRadius:8, padding:'7px', color:P.lime, fontSize:11, fontWeight:700, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>{dark?'Switch to Light':'Switch to Dark'}</button>
-                      <button onClick={()=>{setLessonDone(false); persist({lessonDone:false});}} style={{background:'none', border:`1px solid ${P.border}`, borderRadius:8, padding:'7px', color:P.textMid, fontSize:11, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>Reset lesson</button>
-                      <button onClick={()=>{localStorage.clear(); setOnboard(true); setLessonDone(false); setScore(68);}} style={{background:'none', border:`1px solid ${P.lime}55`, borderRadius:8, padding:'7px', color:P.lime, fontSize:11, fontWeight:700, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>Restart onboarding</button>
+                      <button onClick={()=>{setDark(d=>!d);}} style={{background:P.limeDim, border:`1px solid ${P.lime}44`, borderRadius:8, padding:'7px', color:P.lime, fontSize:11, fontWeight:700, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>{dark?t('switchLight',lang):t('switchDark',lang)}</button>
+                      <button onClick={()=>{setLessonDone(false); persist({lessonDone:false});}} style={{background:'none', border:`1px solid ${P.border}`, borderRadius:8, padding:'7px', color:P.textMid, fontSize:11, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>{t('resetLesson',lang)}</button>
+                      <button onClick={()=>{localStorage.clear(); setOnboard(true); setLessonDone(false); setScore(68);}} style={{background:'none', border:`1px solid ${P.lime}55`, borderRadius:8, padding:'7px', color:P.lime, fontSize:11, fontWeight:700, cursor:'pointer', fontFamily:'Plus Jakarta Sans,sans-serif'}}>{t('restartOnb',lang)}</button>
                     </div>
                   </div>
                 )}
